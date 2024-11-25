@@ -1,3 +1,3 @@
-import { createSignal, effect, derived } from "./src/lib/state-signal";
+import { createSignal, effect, derived } from './src/lib';
 
 export { createSignal, derived, effect };

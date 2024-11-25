@@ -1,7 +1,7 @@
 {
   "name": "state-signal",
   "version": "0.0.1",
-  "description": "A TypeScript library built with Vite",
+  "description": "A minimal signal based state management solution with cherrys on top!",
   "type": "module",
   "private": false,
   "license": "MIT",

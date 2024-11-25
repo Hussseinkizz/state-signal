@@ -23,3 +23,5 @@ effect(() => {
     button.innerHTML = `clicked: ${count.value}`;
   }
 });
+
+console.log(count.history());

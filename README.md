@@ -7,6 +7,7 @@ A minimal signal based state management solution with cherrys on top!
 - Framework Agnostic
 - Automatic Dependency Tracking In Effects
 - Exposes createSignal, derived and effect primitives
+- Provides signal history or snapshots
 - Lightweight, Zero Dependencies, Type Safe!
 
 ## Installation
@@ -15,34 +16,102 @@ A minimal signal based state management solution with cherrys on top!
 npm install state-signal
 ```
 
-## Usage
+## How It Works
+
+### 1. Basic Signals
+
+Create and manage reactive state with simple signal premitive.
 
 ```typescript
-import { createSignal, derived, effect } from 'state-signal';
+import { createSignal } from 'state-signal';
 
-// Create some signals
-const signalA = createSignal(1);
-const signalB = createSignal(2);
+// Counter example
+const counter = createSignal(0);
 
-// Create a derived signal based on signalA and signalB
-const sum = derived(() => signalA.value + signalB.value);
+// Get initial value
+console.log(counter.value); // Logs: 0
 
-// Create an effect to log the value of the sum whenever it changes
+// Update the value
+counter.value += 1;
+console.log(counter.value); // Logs: 1
+```
+
+### 2. Derived Signals
+
+Automatically compute values based on other signals.
+
+```typescript
+import { createSignal, derived } from 'state-signal';
+
+// Signals for first name and last name
+const firstName = createSignal("John");
+const lastName = createSignal("Doe");
+
+// Derived signal to compute full name
+const fullName = derived(() => `${firstName.value} ${lastName.value}`);
+
+console.log(fullName.value); // Logs: "John Doe"
+
+// Update one of the signals
+firstName.value = "Jane";
+console.log(fullName.value); // Logs: "Jane Doe"
+```
+Note: derived signals can't be directly updated, as in derivedSignal.value = something is not allowed to mantain semantics.
+
+### 3. Effects
+
+Effects run whenever signals they depend on change.
+
+```typescript
+import { createSignal, effect } from 'state-signal';
+
+// Signal to track room temperature
+const roomTemperature = createSignal(25);
+
+// Effect to log temperature changes, runs everytime we update roomTemperature signal
 effect(() => {
-  console.log(`Sum is: ${sum.value}`);
+  console.log(`Temperature updated: ${roomTemperature.value}°C`);
 });
 
-// Initial logging when the signals are created
-// Logs: "Sum is: 3" (1 + 2)
-
-// Update signalA and signalB, which triggers the effect
-signalA.value = 5; // Logs: "Sum is: 7" (5 + 2)
-signalB.value = 3; // Logs: "Sum is: 8" (5 + 3)
-
-// Attempting to manually update the derived signal logs an error
-sum.value = 10; // Logs: "Error: Derived signals are computed values and cannot be manually updated."
-
+// Update the temperature, triggering the effect
+roomTemperature.value = 28; // Logs: "Temperature updated: 28°C"
+roomTemperature.value = 22; // Logs: "Temperature updated: 22°C"
 ```
+
+### 4. Signal History
+
+Track and access past states of a signal, configurable per signal.
+
+```typescript
+import { createSignal } from 'state-signal';
+
+// Signal to track a movie series' release years with history enabled
+const movieReleaseYears = createSignal(2001, { history: true, maxHistory: 3 });
+
+// Update release years to build a history
+movieReleaseYears.value = 2002; // First sequel
+movieReleaseYears.value = 2005; // Second sequel
+movieReleaseYears.value = 2010; // Third sequel
+
+// Access history
+console.log(movieReleaseYears.history(-1)); // Logs: 2010 (most recent value)
+console.log(movieReleaseYears.history(-2)); // Logs: 2005 (second most recent value)
+console.log(movieReleaseYears.history()); // Logs: [2002, 2005, 2010] (entire history)
+
+// Exceeding maxHistory
+movieReleaseYears.value = 2020; // Fourth sequel, oldest entry removed
+console.log(movieReleaseYears.history()); // Logs: [2005, 2010, 2020]
+
+// Out-of-bounds access
+console.log(movieReleaseYears.history(-5));
+// Logs: "state signal error: Requested history index (-5) exceeds current size (3)..."
+
+// Signal without history
+const singleYearSignal = createSignal(1995, { history: false });
+console.log(singleYearSignal.history(-1));
+// Logs: "History is deactivated for this signal."
+```
+Note: by default history is enabled for each signal and upto 10 snapshots by default.
 
 ## Contributing
 

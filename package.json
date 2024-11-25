@@ -1,0 +1,99 @@
+{
+  "name": "state-signal",
+  "version": "0.0.1",
+  "description": "A TypeScript library built with Vite",
+  "type": "module",
+  "private": false,
+  "license": "MIT",
+  "author": {
+    "name": "Hussein Kizz",
+    "email": "hssnkizz@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Hussseinkizz/state-signal.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Hussseinkizz/state-signal/issues"
+  },
+  "homepage": "https://github.com/Hussseinkizz/state-signal#readme",
+  "keywords": [
+    "typescript",
+    "vite",
+    "library"
+  ],
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/index.umd.js",
+  "module": "./dist/index.es.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.umd.js"
+    }
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "type-check": "tsc --noEmit",
+    "lint": "eslint",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
+    "size": "size-limit",
+    "size:analyze": "size-limit --why",
+    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
+    "prepare": "npm run build",
+    "preversion": "npm run type-check && npm run lint && npm run test",
+    "version": "changeset version && npm run format && git add -A",
+    "postversion": "git push origin main --follow-tags",
+    "prepublishOnly": "npm run ci",
+    "publish": "changeset publish",
+    "clean": "rm -rf dist",
+    "ci": "npm run clean && npm run type-check && npm run lint && npm run test && npm run build && npm run check-exports && npm run size"
+  },
+  "peerDependencies": {
+    "@types/node": ">=18"
+  },
+  "devDependencies": {
+    "@arethetypeswrong/cli": "^0.16.4",
+    "@changesets/cli": "^2.27.9",
+    "@size-limit/preset-small-lib": "^11.1.0",
+    "@types/node": "^22.8.1",
+    "@typescript-eslint/eslint-plugin": "^8.11.0",
+    "@typescript-eslint/parser": "^8.11.0",
+    "@vitest/coverage-v8": "^1.0.0",
+    "eslint": "^9.13.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.2.1",
+    "prettier": "^3.0.0",
+    "rollup-plugin-dts": "^6.0.0",
+    "size-limit": "^11.1.0",
+    "typescript": "^5.0.0",
+    "vite": "^5.0.0",
+    "vitest": "^2.1.3"
+  },
+  "packageManager": "pnpm@8.0.0",
+  "size-limit": [
+    {
+      "path": "dist/index.es.js",
+      "limit": "10 kb"
+    },
+    {
+      "path": "dist/index.umd.js",
+      "limit": "10 kb"
+    }
+  ]
+}

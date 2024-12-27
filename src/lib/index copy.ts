@@ -1,9 +1,6 @@
 interface Signal<T> {
   value: T;
   subscribers: Set<Function>;
-  history(delta?: number): T | T[] | null;
-  lock(): symbol | null;
-  unlock(key: symbol | null): boolean;
 }
 
 interface SignalOptions {
@@ -13,14 +10,13 @@ interface SignalOptions {
 
 // Stack for managing active subscribers (effects)
 const subscriberStack: Function[] = [];
-let activeEffect: Function | null = null;
-
-// Dirty signals map for each running effect
-const dirtySignals = new Map<Function, Set<Signal<unknown>>>();
 
 // Batching mechanism
 let batchedEffects = new Set<Function>();
 let isBatching = false;
+
+// Current effect being executed
+let currentEffect: Function | null = null;
 
 /**
  * Runs batched effects when batching is enabled.
@@ -39,15 +35,12 @@ function runBatchedEffects(): void {
  * @param options{SignalOptions} - Extra configuration for this signal.
  * @returns An object with getter and setter for the signal's value.
  */
-export function createSignal<T>(
-  initialValue: T,
-  options: SignalOptions = {}
-): Signal<T> {
+export function createSignal<T>(initialValue: T, options: SignalOptions = {}) {
   const { history = true, maxHistory = 10 } = options;
   let value = initialValue;
   const subscribers = new Set<Function>();
   const historyArray: T[] = history ? [initialValue] : [];
-  let lock_key: symbol | null = null;
+  let lock_key: null | any = null;
 
   return {
     get value(): T {
@@ -55,10 +48,6 @@ export function createSignal<T>(
       if (currentSubscriber) {
         subscribers.add(currentSubscriber);
       }
-      const activeEffect = subscriberStack[subscriberStack.length - 1];
-      const effectDirtySignals = dirtySignals.get(activeEffect);
-      // Mark the signal as dirty for this subscriber
-      effectDirtySignals?.add(this);
       return value;
     },
     set value(newValue: T) {
@@ -74,28 +63,8 @@ export function createSignal<T>(
             historyArray.shift();
           }
         }
-
         for (const subscriber of subscribers) {
-          // const activeEffect = subscriberStack[subscriberStack.length - 1];
-          // const effectDirtySignals = dirtySignals.get(activeEffect);
-          // Mark the signal as dirty for this subscriber
-          // effectDirtySignals?.add(this);
-
-          // console.log('log:activeEffect:', activeEffect);
-          // console.log('log::dirtySignals', dirtySignals);
-          // console.log('log::effectDirtySignals', effectDirtySignals);
-          // if (effectDirtySignals?.has(this)) {
-          // Skip notifying this subscriber since it's dirty for the active effect
-          // console.log('already dirty...', newValue);
-          //   continue;
-          // }
-          if (subscriber === activeEffect) {
-            console.log('we are inside effect!', newValue);
-            // subscriberStack.pop();
-            activeEffect = null;
-            continue;
-          }
-
+          if (subscriber === currentEffect) continue;
           if (isBatching) {
             batchedEffects.add(subscriber);
           } else {
@@ -127,7 +96,7 @@ export function createSignal<T>(
         return historyArray.reverse()[index];
       }
       console.error(
-        `State signal error: Requested history index (${delta}) exceeds current size (${historyArray.length}).`
+        `state signal error: Requested history index (${delta}) exceeds current size (${historyArray.length}). Consider using an index between -${historyArray.length} and -1.`
       );
       return null;
     },
@@ -140,7 +109,8 @@ export function createSignal<T>(
         console.error('Signal already has a lock!');
         return null;
       }
-      const newId = Symbol();
+      let newId = Symbol();
+      // console.log("key:", newId);
       lock_key = newId;
       return lock_key;
     },
@@ -149,23 +119,17 @@ export function createSignal<T>(
      * @param lock_key - The signal's unlock key returned from it's lock method.
      * @returns bool - True if unlocked or false otherwise.
      */
-    unlock(key: symbol): boolean {
+    unlock(key: typeof lock_key) {
       if (!lock_key) {
         console.error('Signal has no lock!');
         return false;
       }
       if (key !== lock_key) {
-        console.error('Unlock key does not match signal lock key!');
+        console.error('unlock key does not match signal lock key!');
         return false;
       }
       lock_key = null;
       return true;
-    },
-    /**
-     * Immutable set of subscribers.
-     */
-    get subscribers() {
-      return Object.freeze(new Set(subscribers));
     },
   };
 }
@@ -181,18 +145,11 @@ export function effect(fn: Function): void {
 
   const reactiveFn: ReactiveFunction = () => {
     cleanup();
-
+    currentEffect = reactiveFn;
     subscriberStack.push(reactiveFn);
-    activeEffect = reactiveFn;
-    dirtySignals.set(reactiveFn, new Set()); // Initialize dirty signals tracking
-
     try {
       fn();
     } finally {
-      const activeDirtySignals = dirtySignals.get(reactiveFn);
-      if (activeDirtySignals) {
-        activeDirtySignals.clear(); // Clear dirty signals after the effect completes
-      }
       subscriberStack.pop();
     }
   };
@@ -205,7 +162,7 @@ export function effect(fn: Function): void {
   };
 
   reactiveFn.trackedSignals = [];
-  reactiveFn(); // Initial execution of the effect
+  reactiveFn();
 }
 
 /**

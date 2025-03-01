@@ -16,7 +16,53 @@ A minimal signal based state management solution with cherrys on top!
 npm install state-signal
 ```
 
-## How It Works
+## Usage With React
+
+1. Make sure you already have your react project setup and react installed.
+2. Install state-signal using npm or yarn.
+3. At your project root create a store.ts file.
+4. Define and export your signals in the store.ts file.
+
+```ts
+// store.ts
+import { createSignal, derived } from 'state-signal';
+
+export const counterSignal = createSignal(0);
+export const userSignal = createSignal(null);
+```
+
+5. Import and use your signals in your components via useSignal hook as below.
+
+```tsx
+// page.tsx
+import { useSignal } from 'state-signal';
+import { counterSignal, userSignal } from './store';
+
+function Counter() {
+  const [count, setCount] = useSignal(counterSignal);
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+      {/* you can also still update a signal directly no problem */}
+      <button onClick={() => counterSignal.value -= 1}>Decrement</button>
+    </div>
+  );
+}
+
+function User() {
+  const [user, setUser] = useSignal(userSignal);
+  console.log(userSignal.histroy()); // []
+  return (
+    <div>
+      <p>User: {user ? user.name : 'Guest'}</p>
+      <button onClick={() => setUser({ name: 'John Doe' })}>Login</button>
+    </div>
+  );
+}
+```
+
+## Core Usage, No Framework Just Vanilla JavaScript!
 
 ### 1. Basic Signals
 

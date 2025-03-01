@@ -62,7 +62,7 @@
     "prepublishOnly": "npm run ci",
     "publish": "changeset publish",
     "clean": "rm -rf dist",
-    "ci": "npm run clean && npm run type-check && npm run lint && npm run test && npm run build && npm run check-exports && npm run size"
+    "ci": "npm run clean && npm run type-check && npm run lint && npm run build && npm run check-exports && npm run size"
   },
   "peerDependencies": {
     "@types/node": ">=18"

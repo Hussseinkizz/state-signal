@@ -1,14 +1,14 @@
-interface Signal<T> {
+export type Signal<T> = {
     value: T;
     subscribers: Set<Function>;
     history(delta?: number): T | T[] | null;
     lock(): symbol | null;
     unlock(key: symbol | null): boolean;
-}
-interface SignalOptions {
+};
+export type SignalOptions = {
     history?: boolean;
     maxHistory?: number;
-}
+};
 /**
  * Creates a reactive signal.
  * @param initialValue - The initial value of the signal.
@@ -29,4 +29,3 @@ export declare function effect(fn: Function): void;
 export declare function derived<T>(fn: () => T): {
     value: T;
 };
-export {};

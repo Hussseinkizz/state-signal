@@ -1,15 +1,15 @@
-interface Signal<T> {
+export type Signal<T> = {
   value: T;
   subscribers: Set<Function>;
   history(delta?: number): T | T[] | null;
   lock(): symbol | null;
   unlock(key: symbol | null): boolean;
-}
+};
 
-interface SignalOptions {
+export type SignalOptions = {
   history?: boolean;
   maxHistory?: number;
-}
+};
 
 // Stack for managing active subscribers (effects)
 const subscriberStack: Function[] = [];
@@ -41,7 +41,7 @@ function runBatchedEffects(): void {
  */
 export function createSignal<T>(
   initialValue: T,
-  options: SignalOptions = {}
+  options: SignalOptions = {},
 ): Signal<T> {
   const { history = true, maxHistory = 10 } = options;
   let value = initialValue;
@@ -63,7 +63,7 @@ export function createSignal<T>(
     },
     set value(newValue: T) {
       if (lock_key) {
-        console.error('Signal locked!');
+        console.error("Signal locked!");
         return;
       }
       if (value !== newValue) {
@@ -90,7 +90,7 @@ export function createSignal<T>(
           //   continue;
           // }
           if (subscriber === activeEffect) {
-            console.log('we are inside effect!', newValue);
+            console.log("we are inside effect!", newValue);
             // subscriberStack.pop();
             activeEffect = null;
             continue;
@@ -127,7 +127,7 @@ export function createSignal<T>(
         return historyArray.reverse()[index];
       }
       console.error(
-        `State signal error: Requested history index (${delta}) exceeds current size (${historyArray.length}).`
+        `State signal error: Requested history index (${delta}) exceeds current size (${historyArray.length}).`,
       );
       return null;
     },
@@ -137,7 +137,7 @@ export function createSignal<T>(
      */
     lock() {
       if (lock_key) {
-        console.error('Signal already has a lock!');
+        console.error("Signal already has a lock!");
         return null;
       }
       const newId = Symbol();
@@ -151,11 +151,11 @@ export function createSignal<T>(
      */
     unlock(key: symbol): boolean {
       if (!lock_key) {
-        console.error('Signal has no lock!');
+        console.error("Signal has no lock!");
         return false;
       }
       if (key !== lock_key) {
-        console.error('Unlock key does not match signal lock key!');
+        console.error("Unlock key does not match signal lock key!");
         return false;
       }
       lock_key = null;
@@ -225,7 +225,7 @@ export function derived<T>(fn: () => T) {
     },
     set value(_: T) {
       console.error(
-        'Error: Derived signals are computed values and cannot be manually updated.'
+        "Error: Derived signals are computed values and cannot be manually updated.",
       );
     },
   };

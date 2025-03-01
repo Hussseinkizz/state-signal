@@ -1,4 +1,4 @@
-# State Signals
+# State Signal
 
 A minimal signal based state management solution with cherrys on top!
 

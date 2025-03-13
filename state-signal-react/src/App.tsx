@@ -1,12 +1,12 @@
-import { useSignal } from "../hooks/useSignal";
-import { countSignal } from "../store";
+import { useSignal } from '../hooks/useSignal';
+import { countSignal } from '../store';
 
 function Counter() {
   const [count, setCount] = useSignal(countSignal);
   return (
     <div>
       <p>Count: {count}</p>
-      <button onClick={() => setCount((c) => c + 1)}>
+      <button onClick={() => setCount((c: number) => c + 1)}>
         Increment via useSignal
       </button>
     </div>

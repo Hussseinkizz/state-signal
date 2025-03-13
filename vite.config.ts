@@ -6,7 +6,7 @@ export default defineConfig({
   build: {
     lib: {
       entry: resolve(__dirname, 'index.ts'),
-      name: 'add-lib',
+      name: 'state-signal',
       fileName: 'index',
       formats: ['es', 'umd'],
     },
@@ -26,9 +26,12 @@ export default defineConfig({
     {
       name: 'generate-types',
       closeBundle() {
-        execSync('tsc --emitDeclarationOnly --declarationDir ./dist', {
-          stdio: 'inherit',
-        });
+        execSync(
+          'tsc --jsx react-jsx --emitDeclarationOnly --declarationDir ./dist',
+          {
+            stdio: 'inherit',
+          }
+        );
       },
     },
     {

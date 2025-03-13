@@ -1,6 +1,6 @@
 {
   "name": "state-signal",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "A minimal signal based state management solution with cherrys on top!",
   "type": "module",
   "private": false,
@@ -50,11 +50,11 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "type-check": "tsc --noEmit",
-    "lint": "eslint",
+    "lint": "eslint --fix",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "size": "size-limit",
     "size:analyze": "size-limit --why",
-    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
+    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm -f json",
     "prepare": "npm run build",
     "preversion": "npm run type-check && npm run lint && npm run test",
     "version": "changeset version && npm run format && git add -A",
@@ -62,7 +62,8 @@
     "prepublishOnly": "npm run ci",
     "publish": "changeset publish",
     "clean": "rm -rf dist",
-    "ci": "npm run clean && npm run type-check && npm run lint && npm run build && npm run check-exports && npm run size"
+    "ci": "npm run clean && npm run type-check && npm run lint && npm run build && npm run check-exports && npm run size",
+    "ci2": "npm run clean && npm run lint && npm run build && npm run check-exports && npm run size"
   },
   "peerDependencies": {
     "@types/node": ">=18"

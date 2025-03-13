@@ -1,0 +1,14 @@
+type Updater<T> = (value: T) => T;
+
+/**
+ * Hook to use a signal in a React component.
+ *
+ * @param signal The signal to use.
+ * @returns A tuple containing the current value of the signal and a function to update it.
+ * @example
+ * ```tsx
+ * const countSignal = createSignal(0);
+ * const [count, setCount] = useSignal(countSignal);
+ * ```
+ */
+export declare function useSignal<T>(signal: Signal<T>): [T, (newValueOrUpdater: T | Updater<T>) => void];

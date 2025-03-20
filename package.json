@@ -32,8 +32,8 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.es.js",
-      "require": "./dist/index.umd.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
   "engines": {

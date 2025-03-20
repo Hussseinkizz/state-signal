@@ -57,7 +57,7 @@
     "preversion": "pnpm run type-check && pnpm run lint && pnpm run test",
     "version": "changeset version && pnpm run format && git add -A",
     "postversion": "git push origin main --follow-tags",
-    "prepublishOnly": "pnpm run ci",
+    "prepublishOnly": "pnpm run export",
     "publish": "changeset publish",
     "clean": "rm -rf dist",
     "export": "pnpm run clean && pnpm run type-check && pnpm run lint && pnpm run build && pnpm run check-exports && pnpm run size"

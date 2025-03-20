@@ -1,6 +1,6 @@
 {
   "name": "state-signal",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "A minimal signal based state management solution with cherrys on top!",
   "type": "module",
   "private": false,
@@ -43,9 +43,7 @@
     "access": "public"
   },
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build && cat ./state-signal-react/hooks/useSignal.d.ts.txt >> dist/index.d.ts",
-    "preview": "vite preview",
+    "build": "tsup",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
@@ -54,15 +52,15 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "size": "size-limit",
     "size:analyze": "size-limit --why",
-    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm -f json",
-    "prepare": "npm run build",
-    "preversion": "npm run type-check && npm run lint && npm run test",
-    "version": "changeset version && npm run format && git add -A",
+    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm",
+    "prepare": "pnpm run build",
+    "preversion": "pnpm run type-check && pnpm run lint && pnpm run test",
+    "version": "changeset version && pnpm run format && git add -A",
     "postversion": "git push origin main --follow-tags",
-    "prepublishOnly": "npm run ci",
+    "prepublishOnly": "pnpm run ci",
     "publish": "changeset publish",
     "clean": "rm -rf dist",
-    "ci": "npm run clean && npm run type-check && npm run lint && npm run build && npm run check-exports && npm run size"
+    "export": "pnpm run clean && pnpm run type-check && pnpm run lint && pnpm run build && pnpm run check-exports && pnpm run size"
   },
   "peerDependencies": {
     "@types/node": ">=18"
@@ -72,8 +70,11 @@
     "@changesets/cli": "^2.27.9",
     "@size-limit/preset-small-lib": "^11.1.0",
     "@types/node": "^22.8.1",
+    "@types/react": "^19.0.10",
+    "@types/react-dom": "^19.0.4",
     "@typescript-eslint/eslint-plugin": "^8.11.0",
     "@typescript-eslint/parser": "^8.11.0",
+    "@vitest/coverage-istanbul": "3.0.8",
     "@vitest/coverage-v8": "^1.0.0",
     "eslint": "^9.13.0",
     "eslint-config-prettier": "^9.1.0",
@@ -81,19 +82,24 @@
     "prettier": "^3.0.0",
     "rollup-plugin-dts": "^6.0.0",
     "size-limit": "^11.1.0",
-    "typescript": "^5.0.0",
-    "vite": "^5.0.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.8.2",
     "vitest": "^2.1.3"
   },
-  "packageManager": "pnpm@8.0.0",
+  "packageManager": "pnpm@10.6.3",
   "size-limit": [
     {
-      "path": "dist/index.es.js",
+      "path": "dist/index.js",
       "limit": "10 kb"
     },
     {
-      "path": "dist/index.umd.js",
+      "path": "dist/index.cjs",
       "limit": "10 kb"
     }
-  ]
+  ],
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "esbuild"
+    ]
+  }
 }

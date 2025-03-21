@@ -8,6 +8,7 @@ export default defineConfig({
   clean: true,
   splitting: false,
   treeshake: true,
+  external: ["react", "react-dom"], // Mark React as external
   esbuildOptions(options) {
     options.jsx = "automatic"; // Keeps JSX in the bundle for React
   },

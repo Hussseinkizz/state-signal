@@ -1,3 +1,4 @@
+'use client';
 import { useSyncExternalStore } from 'react';
 import { effect, type Signal } from '../../index';
 

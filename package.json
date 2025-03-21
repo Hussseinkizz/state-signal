@@ -1,6 +1,6 @@
 {
   "name": "state-signal",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "A minimal signal based state management solution with cherrys on top!",
   "type": "module",
   "private": false,

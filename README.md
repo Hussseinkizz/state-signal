@@ -23,6 +23,8 @@ npm install state-signal
 3. At your project root create a store.ts file.
 4. Define and export your signals in the store.ts file.
 
+> In case you get an error like Error: useSyncExternalStore only works in Client Components. Add the "use client" directive at the top of the file to use it. Please do it and add the "use client" directive at the top of every file where your using the useSignal hook as it uses useSyncExternalStore react hook under the hood to effectively sync signal values with react components.
+
 ```ts
 // store.ts
 import { createSignal, derived } from 'state-signal';

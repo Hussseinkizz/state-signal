@@ -1,6 +1,6 @@
-'use client';
-import { useSyncExternalStore } from 'react';
-import { effect, type Signal } from '../../index';
+"use client";
+import { useSyncExternalStore } from "react";
+import { effect, type Signal } from "../../index";
 
 type Updater<T> = (prevValue: T) => T;
 
@@ -16,7 +16,7 @@ type Updater<T> = (prevValue: T) => T;
  * ```
  */
 export function useSignal<T>(
-  signal: Signal<T>
+  signal: Signal<T>,
 ): [T, (newValueOrUpdater: T | Updater<T>) => void] {
   function subscribe(callback: () => void): () => void {
     // Create an effect that runs the callback when signal.value changes
@@ -35,10 +35,14 @@ export function useSignal<T>(
     return signal.value;
   }
 
-  const value = useSyncExternalStore(subscribe, getSnapshot);
+  function getServerSnapshot(): T {
+    return signal.value;
+  }
+
+  const value = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
 
   function setValue(newValueOrUpdater: T | Updater<T>): void {
-    if (typeof newValueOrUpdater === 'function') {
+    if (typeof newValueOrUpdater === "function") {
       signal.value = (newValueOrUpdater as Updater<T>)(signal.value);
     } else {
       signal.value = newValueOrUpdater;

@@ -16,7 +16,7 @@ type Updater<T> = (prevValue: T) => T;
  * ```
  */
 export function useSignal<T>(
-  signal: Signal<T>,
+  signal: Signal<T> | any,
 ): [T, (newValueOrUpdater: T | Updater<T>) => void] {
   function subscribe(callback: () => void): () => void {
     // Create an effect that runs the callback when signal.value changes
